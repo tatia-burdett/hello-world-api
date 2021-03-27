@@ -3,3 +3,5 @@ const CommentService = {
     return knex.select('*').from
   }
 }
+
+module.exports = CommentService

@@ -3,5 +3,5 @@ CREATE TABLE hello_comment (
   nickname TEXT NOT NULL,
   user_location TEXT,
   date_posted TIMESTAMPTZ DEFAULT now() NOT NULL,
-  content TEXT NOT NULL,
+  content TEXT NOT NULL
 );
