@@ -20,3 +20,4 @@ describe('Hello World Endpoints', () => {
 // create a test database, migrate table to test. Do I seed test db? Finish writing test up till the get endpoint... ensure testing and get work well. 
 // Write one endpoint and one test at a time, testing along the way
 // Consider adding a color column to table... to create a color for each comment / note 
+// REMEMBER: YOU ARE WORKING ON A BRANCH! MUST MERGE EVENTUALLY!
