@@ -4,15 +4,32 @@ const supertest = require('supertest')
 const app = require('../src/app')
 const { makeCommentArray } = require('./comment-fixtures')
 
-describe('Hello World Endpoints', () => {
+describe('Hello World Endpoints', function() {
   let db
 
   before('make knex instance', () => {
     db = knex({
       client: 'pg',
-      connection: 'process.env.TEST_DATABASE_URL'
+      connection: process.env.TEST_DB_URL
     })
     app.set('db', db)
+  })
+
+  after('disconnect from db', () => db.destroy())
+
+  before('clean the table', () => db('hello_comment').truncate())
+
+  afterEach('cleanup', () => db('hello_comment').truncate())
+
+  describe('GET /api/comment', () => {
+
+    context('Given there are no folders in the db', () => {
+      it('responds with 200 and an empty list', () => {
+        return supertest(app)
+          .get('/api/comment')
+          .expect(200, [])
+      })
+    })
   })
 })
 
