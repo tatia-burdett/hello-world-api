@@ -171,7 +171,7 @@ describe('Hello World Endpoints', function() {
           .insert(testComments)
       })
 
-      it('Responds with 204 and updates the comment', () => {
+      it('responds with 204 and updates the comment', () => {
         const idToUpdate = 2
         const updateComment = {
           nickname: 'Test New Nickname',
@@ -192,12 +192,40 @@ describe('Hello World Endpoints', function() {
               .expect(expectedComment)
           })
       })
+
+      it('responds with 400 when no required fields supplied', () => {
+        const idToUpdate = 2
+        return supertest(app)
+          .patch(`/api/comment/${idToUpdate}`)
+          .send({ irrelevantField: 'foo' })
+          .expect(400, {
+            error: { message: `Request body must include 'nickname', 'user_location' or 'content'`}
+          })
+      })
+
+      it('responds with 204 when updates only a subset of fields', () => {
+        const idToUpdate = 2
+        const updateComment = {
+          nickname: 'New Nickname'
+        }
+        const expectedComment = {
+          ...testComments[idToUpdate - 1],
+          ...updateComment
+        }
+        return supertest(app)
+          .patch(`/api/comment/${idToUpdate}`)
+          .send(updateComment)
+          .expect(204)
+          .then(res => {
+            supertest(app)
+              .get(`/api/comment/${idToUpdate}`)
+              .expect(expectedComment)
+          })
+      })
     })
   })
 })
 
 // NEED TO:
-// create a test database, migrate table to test. Do I seed test db? Finish writing test up till the get endpoint... ensure testing and get work well. 
-// Write one endpoint and one test at a time, testing along the way
 // Consider adding a color column to table... to create a color for each comment / note 
 // REMEMBER: YOU ARE WORKING ON A BRANCH! MUST MERGE EVENTUALLY!
