@@ -8,6 +8,15 @@ const CommentService = {
       .select('*')
       .where('id', id)
       .first()
+  },
+  insertComment(knex, newComment) {
+    return knex
+      .insert(newComment)
+      .into('hello_comment')
+      .returning('*')
+      .then(rows => {
+        return rows[0]
+      })
   }
 }
 

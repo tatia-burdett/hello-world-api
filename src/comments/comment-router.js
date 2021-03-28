@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const CommentService = require('./comment-service')
 
 const commentRouter = express.Router()
@@ -19,6 +20,30 @@ commentRouter
     CommentService.getAllComments(knexInstance)
       .then(comments => {
         res.json(comments.map(serializeComment))
+      })
+      .catch(next)
+  })
+  .post(jsonParser, (req, res, next) => {
+    const { nickname, user_location, content } = req.body
+    const newComment = { nickname, user_location, content }
+    
+    for (const [key, value] of Object.entries(newComment)) {
+      if (!value) {
+        return res.status(400).json({
+          error: { message: `Missing ${key} in request body` }
+        })
+      }
+    }
+
+    CommentService.insertComment(
+      req.app.get('db'),
+      newComment
+    )
+      .then(comment => {
+        res
+          .status(201)
+          .location(path.posix.join(req.originalUrl, `/${comment.id}`))
+          .json(serializeComment(comment))
       })
       .catch(next)
   })
