@@ -111,6 +111,43 @@ describe('Hello World Endpoints', function() {
       })
     })
   })
+
+  describe('DELETE /api/comment/:id', () => { // DELETE /api/comment/:id endpoint
+    
+    context(`Given comment with id doesn't exist in database`, () => {
+      it('responds with 404', () => {
+        const folderId = 123456
+        return supertest(app) 
+          .delete(`/api/comment/${folderId}`)
+          .expect(404, {
+            error: { message: `Comment doesn't exist`}
+          })
+      })
+    })
+
+    context('Given comment with id exists in database', () => {
+      const testComments = makeCommentArray()
+
+      beforeEach('insert comment', () => {
+        return db
+          .into('hello_comment')
+          .insert(testComments)
+      })
+
+      it('Responds with 204 and then removes the comment', () => {
+        const idToRemove = 2
+        const expectedComment = testComments.filter(comment => comment.id !== idToRemove)
+        return supertest(app)
+          .delete(`/api/comment/${idToRemove}`)
+          .expect(204)
+          .then(res => {
+            supertest(app)
+              .get('/api/comment')
+              .expect(expectedComment)
+          })
+      })
+    })
+  })
 })
 
 // NEED TO:
