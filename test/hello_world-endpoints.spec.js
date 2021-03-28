@@ -21,13 +21,27 @@ describe('Hello World Endpoints', function() {
 
   afterEach('cleanup', () => db('hello_comment').truncate())
 
-  describe('GET /api/comment', () => {
+  describe('GET /api/comment', () => { // GET /api/comment endpoint
 
-    context('Given there are no folders in the db', () => {
+    context('Given there are no comments in the db', () => {
       it('responds with 200 and an empty list', () => {
         return supertest(app)
           .get('/api/comment')
           .expect(200, [])
+      })
+    })
+  })
+ 
+  describe('GET /api/comment/:id', () => { // GET /api/comment/:id endpoint
+
+    context('Given there are no comments in the db', () => {
+      it('responds with 404', () => {
+        const commentId = 123456
+        return supertest(app)
+          .get(`/api/comment/${commentId}`)
+          .expect(404, {
+            error: { message: `Comment doesn't exist`}
+          })
       })
     })
   })
