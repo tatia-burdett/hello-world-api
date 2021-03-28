@@ -82,6 +82,26 @@ commentRouter
       })
       .catch(next)
   })
+  .patch(jsonParser, (req, res, next) => {
+    const { nickname, user_location, content } = req.body
+    const commentToUpdate = { nickname, user_location, content }
+
+    const requiredValues = nickname || user_location || content
+    if (!requiredValues) {
+      return res.status(400).json({
+        error: { message: `Request body must include 'nickname', 'user_location' or 'content'` }
+      })
+    }
+    CommentService.updateComment(
+      req.app.get('db'),
+      req.params.id,
+      commentToUpdate
+    )
+      .then(numRowsAffected => {
+        res.status(204).end()
+      })
+      .catch(next)
+  })
 
 
 module.exports = commentRouter

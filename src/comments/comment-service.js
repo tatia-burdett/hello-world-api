@@ -22,6 +22,11 @@ const CommentService = {
     return knex('hello_comment')
       .where({ id })
       .delete()
+  },
+  updateComment(knex, id, newCommentFields) {
+    return knex('hello_comment')
+      .where({ id })
+      .update(newCommentFields)
   }
 }
 
