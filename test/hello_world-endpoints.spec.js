@@ -114,7 +114,7 @@ describe('Hello World Endpoints', function() {
 
   describe('DELETE /api/comment/:id', () => { // DELETE /api/comment/:id endpoint
     
-    context(`Given comment with id doesn't exist in database`, () => {
+    context(`Given comment with id doesn't exist in db`, () => {
       it('responds with 404', () => {
         const folderId = 123456
         return supertest(app) 
@@ -125,7 +125,7 @@ describe('Hello World Endpoints', function() {
       })
     })
 
-    context('Given comment with id exists in database', () => {
+    context('Given comment with id exists in db', () => {
       const testComments = makeCommentArray()
 
       beforeEach('insert comment', () => {
@@ -143,6 +143,52 @@ describe('Hello World Endpoints', function() {
           .then(res => {
             supertest(app)
               .get('/api/comment')
+              .expect(expectedComment)
+          })
+      })
+    })
+  })
+
+  describe('PATCH /api/comment/:id', () => { // PATCH /api/comment/:id endpoint
+
+    context(`Given comment with id doens't exist in db`, () => {
+      it('responds with 404', () => {
+        const commentId = 123456
+        return supertest(app)
+          .patch(`/api/comment/${commentId}`)
+          .expect(404, {
+            error: { message: `Comment doesn't exist` }
+          })
+      })
+    })
+
+    context('Given comment with id exists in db', () => {
+      const testComments = makeCommentArray()
+      
+      beforeEach('insert comment', () => {
+        return db
+          .into('hello_comment')
+          .insert(testComments)
+      })
+
+      it('Responds with 204 and updates the comment', () => {
+        const idToUpdate = 2
+        const updateComment = {
+          nickname: 'Test New Nickname',
+          user_location: 'Newville, NM',
+          content: 'New content... '
+        }
+        const expectedComment = {
+          ...testComments[idToUpdate - 1],
+          ...updateComment
+        }
+        return supertest(app)
+          .patch(`/api/comment/${idToUpdate}`)
+          .send(updateComment)
+          .expect(204)
+          .then(res => {
+            supertest(app)
+              .get(`/api/comment/${idToUpdate}`)
               .expect(expectedComment)
           })
       })
