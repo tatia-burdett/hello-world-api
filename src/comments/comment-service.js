@@ -17,6 +17,11 @@ const CommentService = {
       .then(rows => {
         return rows[0]
       })
+  },
+  deleteComment(knex, id) {
+    return knex('hello_comment')
+      .where({ id })
+      .delete()
   }
 }
 
