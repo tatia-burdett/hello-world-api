@@ -30,6 +30,22 @@ describe('Hello World Endpoints', function() {
           .expect(200, [])
       })
     })
+
+    context('Given there are comments in the db', () => {
+      const testComments = makeCommentArray()
+
+      beforeEach('insert comment', () => {
+        return db
+          .into('hello_comment')
+          .insert(testComments)
+      })
+
+      it('responds with 200 and all of the comments', () => {
+        return supertest(app)
+          .get('/api/comment')
+          .expect(200, testComments)
+      })
+    })
   })
  
   describe('GET /api/comment/:id', () => { // GET /api/comment/:id endpoint
