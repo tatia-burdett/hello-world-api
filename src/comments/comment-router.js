@@ -26,8 +26,9 @@ commentRouter
   .post(jsonParser, (req, res, next) => {
     const { nickname, user_location, content } = req.body
     const newComment = { nickname, user_location, content }
+    const requiredFields = { nickname, content }
     
-    for (const [key, value] of Object.entries(newComment)) {
+    for (const [key, value] of Object.entries(requiredFields)) {
       if (!value) {
         return res.status(400).json({
           error: { message: `Missing ${key} in request body` }

@@ -61,6 +61,56 @@ describe('Hello World Endpoints', function() {
       })
     })
   })
+
+  describe('POST /api/comment', () => { // POST /api/comment endpoint
+    
+    it('creates a comment, returning 201 and the new comment', () => {
+      const newComment = {
+        nickname: 'Test New Name',
+        user_location: 'Testville, TX',
+        content: 'Test new content...'
+      }
+      return supertest(app)
+        .post('/api/comment')
+        .send(newComment)
+        .expect(201)
+        .expect(res => {
+          expect(res.body.nickname).to.eql(newComment.nickname)
+          expect(res.body.user_location).to.eql(newComment.user_location)
+          expect(res.body.content).to.eql(newComment.content)
+          expect(res.body).to.have.property('id')
+          expect(res.headers.location).to.eql(`/api/comment/${res.body.id}`)
+          const expected = new Intl.DateTimeFormat('en-US').format(new Date())
+          const actual = new Intl.DateTimeFormat('en-US').format(new Date(res.body.date_posted))
+          expect(actual).to.eql(expected)
+        })
+        .then(res => {
+          supertest(app)
+            .get(`/api/comment/${res.body.id}`)
+            .expect(res.body)
+        })
+    })
+
+    const requiredFields = ['nickname', 'content']
+
+    requiredFields.forEach(field => {
+      const newComment = {
+        nickname: 'Test nickname',
+        content: 'Test content'
+      }
+
+      it(`responds with 400 and an error message when the ${field} is missing`, () => {
+        delete newComment[field]
+
+        return supertest(app)
+          .post('/api/comment')
+          .send(newComment)
+          .expect(400, {
+            error: { message: `Missing ${field} in request body` }
+          })
+      })
+    })
+  })
 })
 
 // NEED TO:
