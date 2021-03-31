@@ -68,7 +68,8 @@ describe('Hello World Endpoints', function() {
       const newComment = {
         nickname: 'Test New Name',
         user_location: 'Testville, TX',
-        content: 'Test new content...'
+        content: 'Test new content...',
+        category: 'embrace'
       }
       return supertest(app)
         .post('/api/comment')
@@ -78,6 +79,7 @@ describe('Hello World Endpoints', function() {
           expect(res.body.nickname).to.eql(newComment.nickname)
           expect(res.body.user_location).to.eql(newComment.user_location)
           expect(res.body.content).to.eql(newComment.content)
+          expect(res.body.category).to.eql(newComment.category)
           expect(res.body).to.have.property('id')
           expect(res.headers.location).to.eql(`/api/comment/${res.body.id}`)
           const expected = new Intl.DateTimeFormat('en-US').format(new Date())
@@ -91,12 +93,13 @@ describe('Hello World Endpoints', function() {
         })
     })
 
-    const requiredFields = ['nickname', 'content']
+    const requiredFields = ['nickname', 'content', 'category']
 
     requiredFields.forEach(field => {
       const newComment = {
         nickname: 'Test nickname',
-        content: 'Test content'
+        content: 'Test content',
+        category: 'release'
       }
 
       it(`responds with 400 and an error message when the ${field} is missing`, () => {
@@ -176,7 +179,8 @@ describe('Hello World Endpoints', function() {
         const updateComment = {
           nickname: 'Test New Nickname',
           user_location: 'Newville, NM',
-          content: 'New content... '
+          content: 'New content... ',
+          category: 'rejoice'
         }
         const expectedComment = {
           ...testComments[idToUpdate - 1],
@@ -199,7 +203,7 @@ describe('Hello World Endpoints', function() {
           .patch(`/api/comment/${idToUpdate}`)
           .send({ irrelevantField: 'foo' })
           .expect(400, {
-            error: { message: `Request body must include 'nickname', 'user_location' or 'content'`}
+            error: { message: `Request body must include 'nickname', 'user_location', 'content', 'category'`}
           })
       })
 
@@ -225,7 +229,3 @@ describe('Hello World Endpoints', function() {
     })
   })
 })
-
-// NEED TO:
-// Consider adding a color column to table... to create a color for each comment / note 
-// REMEMBER: YOU ARE WORKING ON A BRANCH! MUST MERGE EVENTUALLY!
