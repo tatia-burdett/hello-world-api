@@ -10,7 +10,8 @@ const serializeComment = comment => ({
   nickname: comment.nickname,
   user_location: comment.user_location,
   date_posted: comment.date_posted,
-  content: comment.content
+  content: comment.content,
+  category: comment.category
 })
 
 commentRouter
@@ -24,9 +25,9 @@ commentRouter
       .catch(next)
   })
   .post(jsonParser, (req, res, next) => {
-    const { nickname, user_location, content } = req.body
-    const newComment = { nickname, user_location, content }
-    const requiredFields = { nickname, content }
+    const { nickname, user_location, content, category } = req.body
+    const newComment = { nickname, user_location, content, category }
+    const requiredFields = { nickname, content, category }
     
     for (const [key, value] of Object.entries(requiredFields)) {
       if (!value) {
@@ -83,13 +84,13 @@ commentRouter
       .catch(next)
   })
   .patch(jsonParser, (req, res, next) => {
-    const { nickname, user_location, content } = req.body
-    const commentToUpdate = { nickname, user_location, content }
+    const { nickname, user_location, content, category } = req.body
+    const commentToUpdate = { nickname, user_location, content, category }
 
-    const requiredValues = nickname || user_location || content
+    const requiredValues = nickname || user_location || content || category
     if (!requiredValues) {
       return res.status(400).json({
-        error: { message: `Request body must include 'nickname', 'user_location' or 'content'` }
+        error: { message: `Request body must include 'nickname', 'user_location', 'content', or category` }
       })
     }
     CommentService.updateComment(
