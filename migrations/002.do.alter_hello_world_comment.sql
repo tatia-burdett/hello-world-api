@@ -7,4 +7,4 @@ CREATE TYPE comment_category AS ENUM (
 
 ALTER TABLE hello_comment
   ADD COLUMN
-    category comment_category NOT NULL;
+    category comment_category;
