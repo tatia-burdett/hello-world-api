@@ -172,6 +172,20 @@ describe('Hello World Endpoints', function() {
             error: { message: `Missing ${field} in request body` }
           })
       })
+
+      it('removes an xss attack comment content from response', () => {
+        const { maliciousComment, expectedComment } = makeMaliciousComment()
+
+        return supertest(app)
+          .post('/api/comment')
+          .send(maliciousComment)
+          .expect(201)
+          .expect(res => {
+            expect(res.body.nickname).to.eql(expectedComment.nickname)
+            expect(res.body.user_location).to.eql(expectedComment.user_location)
+            expect(res.body.content).to.eql(expectedComment.content)
+          })
+      })
     })
   })
 
