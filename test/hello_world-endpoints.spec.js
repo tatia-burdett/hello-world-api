@@ -81,6 +81,45 @@ describe('Hello World Endpoints', function() {
           })
       })
     })
+
+    context('Given there are comments in the db', () => {
+      const testComments = makeCommentArray()
+
+      beforeEach('insert comments', () => {
+        return db
+          .into('hello_comment')
+          .insert(testComments)
+      })
+
+      it('responds with 200 and the requested comment', () => {
+        const commentId = 2
+        const expectedComment = testComments[commentId - 1]
+        return supertest(app)
+          .get(`/api/comment/${commentId}`)
+          .expect(200, expectedComment) 
+      })
+    })
+
+    context('Given an xss attack comment', () => {
+      const { maliciousComment, expectedComment } = makeMaliciousComment()
+
+      beforeEach('insert a malicious comment', () => {
+        return db
+          .into('hello_comment')
+          .insert(maliciousComment)
+      })
+
+      it('removes the xss attack content', () => {
+        return supertest(app)
+          .get(`/api/comment/${maliciousComment.id}`)
+          .expect(200)
+          .expect(res => {
+            expect(res.body.nickname).to.eql(expectedComment.nickname)
+            expect(res.body.user_location).to.eql(expectedComment.user_location)
+            expect(res.body.content).to.eql(expectedComment.content)
+          }) 
+      })
+    })
   })
 
   describe('POST /api/comment', () => { // POST /api/comment endpoint
