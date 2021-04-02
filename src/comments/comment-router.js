@@ -1,16 +1,17 @@
 const express = require('express')
 const path = require('path')
 const CommentService = require('./comment-service')
+const xss = require('xss')
 
 const commentRouter = express.Router()
 const jsonParser = express.json()
 
 const serializeComment = comment => ({
   id: comment.id,
-  nickname: comment.nickname,
-  user_location: comment.user_location,
+  nickname: xss(comment.nickname),
+  user_location: xss(comment.user_location),
   date_posted: comment.date_posted,
-  content: comment.content,
+  content: xss(comment.content),
   category: comment.category
 })
 
