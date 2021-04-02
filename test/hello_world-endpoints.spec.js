@@ -2,7 +2,7 @@ const { expect } = require('chai')
 const knex = require('knex')
 const supertest = require('supertest')
 const app = require('../src/app')
-const { makeCommentArray } = require('./comment-fixtures')
+const { makeCommentArray, makeMaliciousComment } = require('./comment-fixtures')
 
 describe('Hello World Endpoints', function() {
   let db
@@ -44,6 +44,27 @@ describe('Hello World Endpoints', function() {
         return supertest(app)
           .get('/api/comment')
           .expect(200, testComments)
+      })
+    })
+
+    context('Given an xss attack comment', () => {
+      const { maliciousComment, expectedComment } = makeMaliciousComment()
+
+      beforeEach('insert a malicious comment', () => {
+        return db
+          .into('hello_comment')
+          .insert(maliciousComment)
+      })
+
+      it('it removes xss attack content', () => {
+        return supertest(app)
+          .get('/api/comment')
+          .expect(200)
+          .expect(res => {
+            expect(res.body[0].nickname).to.eql(expectedComment.nickname)
+            expect(res.body[0].user_location).to.eql(expectedComment.user_location)
+            expect(res.body[0].content).to.eql(expectedComment.content)
+          })
       })
     })
   })
@@ -203,7 +224,7 @@ describe('Hello World Endpoints', function() {
           .patch(`/api/comment/${idToUpdate}`)
           .send({ irrelevantField: 'foo' })
           .expect(400, {
-            error: { message: `Request body must include 'nickname', 'user_location', 'content', 'category'`}
+            error: { message: `Request body must include 'nickname', 'user_location', 'content', or 'category'`}
           })
       })
 

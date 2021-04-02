@@ -91,7 +91,7 @@ commentRouter
     const requiredValues = nickname || user_location || content || category
     if (!requiredValues) {
       return res.status(400).json({
-        error: { message: `Request body must include 'nickname', 'user_location', 'content', or category` }
+        error: { message: `Request body must include 'nickname', 'user_location', 'content', or 'category'` }
       })
     }
     CommentService.updateComment(

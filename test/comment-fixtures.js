@@ -35,6 +35,30 @@ function makeCommentArray() {
   ]
 }
 
+function makeMaliciousComment() {
+  const maliciousComment = {
+    id: 911,
+    nickname: 'Test nickname with script <script>alert("xss");</script>',
+    user_location: 'Test location <script>alert("xss");</script>',
+    date_posted: new Date().toISOString(),
+    content: 'Bad image in content <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. More <strong>content</strong>',
+    category: 'expression'
+  }
+
+  const expectedComment = {
+    ...maliciousComment,
+    nickname: 'Test nickname with script &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
+    user_location: 'Test location &lt;script&gt;alert(\"xss\");&lt;/script&gt;',
+    content: 'Bad image in content <img src="https://url.to.file.which/does-not.exist">. More <strong>content</strong>'
+  }
+
+  return {
+    maliciousComment,
+    expectedComment
+  }
+}
+
 module.exports = {
-  makeCommentArray
+  makeCommentArray,
+  makeMaliciousComment
 }
