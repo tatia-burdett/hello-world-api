@@ -19,3 +19,18 @@ This project was created with:
 
 * GET & POST - /api/comment
 * PATCH & DELETE - /api/comment/:id
+
+## Screenshots
+
+### Landing Page
+![Landing Page Header](screenshots/landingheader.png)
+![Landing Page Section](screenshots/landingsection.png)
+
+### Posts Page
+![View Posts](screenshots/posts.png)
+
+### Single Post Page
+![View Single Post](screenshots/post.png)
+
+### Post Form Page
+![Post Form](screenshots/form.png)
