@@ -6,7 +6,7 @@ This server-side project was built along with a client-side React app, which can
 
 ## Tech Details:
 
-This project was created with:
+This project was created using: 
 * Node.js
 * Express
 * PostgreSQL
